@@ -6,10 +6,10 @@
     }
 
     arrow {
-        background-image: url("jjy's arrow.png");
+        background-image: url("src/jjy\'s\ arrow.png");
         background-size: contain;
         background-repeat: no-repeat ;
         display: block;
         width: 200px;
-        height: 100px;   
+        height: 17px;   
     }
