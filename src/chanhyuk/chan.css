@@ -1,9 +1,23 @@
 char {
     border: 1px black solid;
+    
+    /* border-radius: 50; 둥글게 만드는 코드*/
+
+    position: absolute;
+    top: 100px;;
+    left: 100px;;
+    right: 100px;;
+    width: 100px;
+    height: 100px;
 }
 .movable{
     background-color:blue;
 }
 #arrow1 {
-    background-image: url("../res/chan.png");
+    background-image: url("../chanhyuk/res/chan.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    display: block;
+    width:140px;
+    height: 79px;
 }
