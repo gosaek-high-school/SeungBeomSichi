@@ -1,1 +1,1 @@
-Hello my name is Seungbeom.
+Hello my name is Seun
