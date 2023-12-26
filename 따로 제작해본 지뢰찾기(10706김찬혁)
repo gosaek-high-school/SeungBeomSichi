@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>지뢰찾기</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        td {
+            width: 20px;
+            height: 20px;
+            border: 1px solid #000;
+            text-align: center;
+            vertical-align: middle;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .mine {
+            background-color: #999;
+            color: #fff;
+        }
+
+        .revealed {
+            background-color: #ddd;
+        }
+    </style>
+</head>
+<body>
+    <label for="arraySize">배열 크기 (n): </label>
+    <input type="number" id="arraySize" min="1" value="10">
+    <button onclick="createArray()">게임 시작</button>
+
+    <div id="flagCount">남은 깃발 수: ?</div>
+
+
+    <table>
+        <tbody id="arrayTableBody"></tbody>
+
+        <script>
+            var n, tableBody, minefield, revealedCount, totalMines, flaggedCount;
+
+            function createArray() {
+                n = parseInt(document.getElementById("arraySize").value);
+                tableBody = document.getElementById("arrayTableBody");
+                tableBody.innerHTML = '';
+
+                minefield = Array.from({ length: n }, () => Array(n).fill(0));
+                revealedCount = 0;
+                totalMines = 0;
+                flaggedCount = 0;
+
+                for (var i = 0; i < n; i++) {
+                    var row = document.createElement("tr");
+
+                    for (var j = 0; j < n; j++) {
+                        var cell = document.createElement("td");
+                        cell.dataset.row = i;
+                        cell.dataset.col = j;
+                        cell.addEventListener("click", cellClick);
+                        cell.addEventListener("contextmenu", cellRightClick);
+                        row.appendChild(cell);
+                    }
+
+                    tableBody.appendChild(row);
+                }
+
+                placeMines();
+            }
+
+            function placeMines() {
+                for (var i = 0; i < n; i++) {
+                    for (var j = 0; j < n; j++) {
+                        if (Math.random() < 0.2) {
+                            minefield[i][j] = -1;
+                            totalMines++;
+                        }
+                    }
+                }
+                updateNumbers();
+            }
+
+            function updateNumbers() {
+                for (var i = 0; i < n; i++) {
+                    for (var j = 0; j < n; j++) {
+                        if (minefield[i][j] === -1) {
+                            continue; // 현재 셀이 지뢰인 경우는 건너뜀
+                        }
+
+                        minefield[i][j] = countAdjacentMines(i, j);
+                    }
+                }
+            }
+
+            function countAdjacentMines(row, col) {
+                var count = 0;
+                for (var i = -1; i <= 1; i++) {
+                    for (var j = -1; j <= 1; j++) {
+                        var ni = row + i;
+                        var nj = col + j;
+                        if (ni >= 0 && ni < n && nj >= 0 && nj < n && minefield[ni][nj] === -1) {
+                            count++;
+                        }
+                    }
+                }
+                return count;
+            }
+
+            function cellClick(event) {
+                var row = parseInt(event.target.dataset.row);
+                var col = parseInt(event.target.dataset.col);
+
+                if (event.ctrlKey) {
+                    // 오른쪽 클릭과 함께 왼쪽 클릭 시 인접한 지뢰를 표시하지 않도록
+                    return;
+                }
+
+                revealCell(row, col);
+
+                if (minefield[row][col] === -1) {
+                    // 게임 오버
+                    alert("Game Over! You clicked on a mine.");
+                    createArray();
+                } else if (revealedCount === n * n - totalMines) {
+                    // 모든 셀이 표시되면 게임 성공
+                    alert("Congratulations! You won!");
+                    createArray();
+                }
+            }
+
+            function cellRightClick(event) {
+            event.preventDefault();
+
+            var row = parseInt(event.target.dataset.row);
+            var col = parseInt(event.target.dataset.col);
+            var cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+
+            if (cell.classList.contains("revealed")) {
+                // 이미 열린 셀은 오른쪽 클릭으로 처리하지 않음
+                return;
+            }
+
+            // 추가: 깃발을 지뢰 수만큼만 둘 수 있도록
+            if (cell.classList.contains("flagged")) {
+                cell.classList.remove("flagged");
+                cell.innerHTML = ''; // 깃발 이모티콘 제거
+                cell.style.backgroundColor = "#fff"; // 클릭 가능한 흰색으로 변경
+                flaggedCount--;
+
+                // 모든 지뢰가 깃발로 표시되면 게임 성공
+                if (flaggedCount === totalMines && revealedCount === totalMines) {
+                    alert("축하합니다! 승리하셨습니다!");
+                    createArray();
+                }
+            } else {
+                // 깃발 수가 지뢰 수를 초과하지 않도록
+                if (flaggedCount < totalMines) {
+                    cell.classList.add("flagged");
+                    cell.innerHTML = '🚩'; // 깃발 이모티콘 추가
+                    flaggedCount++;
+                }
+            }
+
+            // 깃발 수 표시 업데이트
+            updateFlagCount();
+        }
+
+        function updateFlagCount() {
+            var remainingFlags = totalMines - flaggedCount;
+            var flagCountDisplay = document.getElementById("flagCount");
+            flagCountDisplay.textContent = `남은 깃발 수: ${remainingFlags}`;
+        }
+
+
+        function revealCell(row, col) {
+            var cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+            if (!cell || cell.classList.contains("revealed") || cell.classList.contains("mine")) {
+                return;
+            }
+
+            cell.classList.add("revealed");
+            revealedCount++;
+
+            if (minefield[row][col] === 0) {
+                // 주변에 지뢰가 없으면 주변 셀들을 재귀적으로 열기
+                for (var i = -1; i <= 1; i++) {
+                    for (var j = -1; j <= 1; j++) {
+                        var ni = row + i;
+                        var nj = col + j;
+                        if (ni >= 0 && ni < n && nj >= 0 && nj < n) {
+                            revealCell(ni, nj);
+                        }
+                    }
+                }
+            } else if (minefield[row][col] === -1) {
+                // 주변 지뢰가 있으면 숫자를 표시
+                cell.classList.add("mine");
+            } else {
+                // 주변 지뢰가 있으면 숫자를 표시
+                cell.textContent = minefield[row][col];
+            }
+
+            // 추가: 깃발을 회수하면 클릭 가능한 흰색으로 변경
+            if (cell.classList.contains("flagged")) {
+                cell.classList.remove("flagged");
+                cell.innerHTML = ''; // 깃발 이모티콘 제거
+                cell.style.backgroundColor = "#fff"; // 클릭 가능한 흰색으로 변경
+                flaggedCount--;
+
+                // 모든 지뢰가 깃발로 표시되면 게임 성공
+                if (flaggedCount === totalMines && revealedCount === totalMines) {
+                    alert("축하합니다! 승리하셨습니다!");
+                    createArray();
+                }
+            }
+        }
+        </script>
+    </table>
+</body>
+</html>
