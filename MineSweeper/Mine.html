@@ -70,7 +70,7 @@
 <script>
     // 난이도 선택을 진행해 줄 seldiff
     const selDiff = document.getElementsByClassName('selectDifficulty');
-    // mineIne안에 지뢰찾기 게임이 들어갈 것이다.
+    // mineIn안에 지뢰찾기 게임이 들어갈 것이다.
     const mineIn = document.getElementById('mineIn');
     // 남아있는 폭탄 개수를 보여줄 mineRemain -> 실제 폭탄 개수가 아니라, 내가 매핑해 준 지뢰의 개수
     const mineRemain = document.getElementById('mineRemain');
@@ -149,9 +149,9 @@
         var xFrame;
         var yFrame;
         switch(choise){
-            case 'easy' : xFrame = 10; yFrame = 10; wholeMine = 41; break;
-            case 'normal' : xFrame = 15; yFrame = 15; wholeMine = 90; break;
-            case 'hard' : xFrame = 22; yFrame = 22; wholeMine = 195; break;
+            case 'easy' : xFrame = 10; yFrame = 10; wholeMine = 40; break;
+            case 'normal' : xFrame = 15; yFrame = 15; wholeMine = 100; break;
+            case 'hard' : xFrame = 22; yFrame = 22; wholeMine = 200; break;
         }
         mappingMine = wholeMine;
         mineMap = Array.mineMaker(xFrame, yFrame, wholeMine);   // mineMaker를 통해 이차원 배열 mineMap에 지뢰 매설 및 안전지대 땅 설정
