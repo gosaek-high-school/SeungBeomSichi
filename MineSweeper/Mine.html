@@ -149,9 +149,9 @@
         var xFrame;
         var yFrame;
         switch(choise){
-            case 'easy' : xFrame = 10; yFrame = 10; wholeMine = 40; break;
-            case 'normal' : xFrame = 15; yFrame = 15; wholeMine = 100; break;
-            case 'hard' : xFrame = 22; yFrame = 22; wholeMine = 200; break;
+            case 'easy' : xFrame = 10; yFrame = 10; wholeMine = 10; break;
+            case 'normal' : xFrame = 15; yFrame = 15; wholeMine = 40; break;
+            case 'hard' : xFrame = 22; yFrame = 22; wholeMine = 99; break;
         }
         mappingMine = wholeMine;
         mineMap = Array.mineMaker(xFrame, yFrame, wholeMine);   // mineMaker를 통해 이차원 배열 mineMap에 지뢰 매설 및 안전지대 땅 설정
