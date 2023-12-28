@@ -33,10 +33,14 @@
             color: #f00;
             background-color: #f00;
         }
+        .flaggedmine {
+            color: #0f0;
+            background-color: #0f0;
+        }
     </style>
 </head>
 <body>
-    <label for="arraySize">맵 크기: </label>
+    <label for="arraySize">맵 크기(5~50) : </label>
     <input type="number" id="arraySize" min="1" value="10">
     <button onclick="createArray()">게임 시작</button>
 
@@ -50,7 +54,12 @@
             var n, tableBody, minefield, revealedCount, totalMines, flaggedCount;
 
             function createArray() {
+                var oldtime=Date.now();
                 n = parseInt(document.getElementById("arraySize").value);
+                if (n<5 || 50<n){
+                    alert("잘못된 입력입니다.");
+                    creatArray();
+                }
                 tableBody = document.getElementById("arrayTableBody");
                 tableBody.innerHTML = '';
 
@@ -194,7 +203,10 @@
                     var cell = document.querySelector(`[data-row="${i}"][data-col="${j}"]`)
                     if (minefield[i][j]===-1){
                         cell.innerHTML = '💣';
-                        cell.style.color = "#999";
+                        if (cell.classList.contains("flagged"))
+                            cell.classList.add("flaggedmine");
+                        else
+                            cell.style.color = "#999";
                     }
                     else
                         if(cell.classList.contains("flagged"))
