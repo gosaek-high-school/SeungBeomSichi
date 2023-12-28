@@ -29,10 +29,14 @@
         .revealed {
             background-color: #ddd;
         }
+        .clickedmine {
+            color: #f00;
+            background-color: #f00;
+        }
     </style>
 </head>
 <body>
-    <label for="arraySize">배열 크기 (n): </label>
+    <label for="arraySize">맵 크기: </label>
     <input type="number" id="arraySize" min="1" value="10">
     <button onclick="createArray()">게임 시작</button>
 
@@ -119,19 +123,18 @@
 
 
                 if (cell.classList.contains("flagged")) {
-                    // 이미 열린 셀은 오른쪽 클릭으로 처리하지 않음
+                    // 이미 깃발 꽂힌 셀은 클릭으로 처리하지 않음
                     return;
                 }
 
-                if (event.ctrlKey) {
-                    // 오른쪽 클릭과 함께 왼쪽 클릭 시 인접한 지뢰를 표시하지 않도록
+                if (event.ctrlKey) 
                     return;
-                }
 
                 revealCell(row, col);
 
                 if (minefield[row][col] === -1) {
                     // 게임 오버
+                    cell.classList.add("clickedmine");
                     openEnd();
                     alert("Game Over! You clicked on a mine.");
                 } 
@@ -159,13 +162,11 @@
             if (cell.classList.contains("flagged")) {
                 cell.classList.remove("flagged");
                 cell.innerHTML = ''; // 깃발 이모티콘 제거
-                cell.style.Color = "#999"; // 클릭 가능한 흰색으로 변경
                 flaggedCount--;
 
                 // 모든 지뢰가 깃발로 표시되면 게임 성공
                 if (flaggedCount === totalMines && revealedCount === totalMines) {
-                    alert("축하합니다! 승리하셨습니다!");
-                    createArray();
+                    alert("축하합니다! 클리어하셨습니다!");
                 }
             } else {
                 // 깃발 수가 지뢰 수를 초과하지 않도록
@@ -190,11 +191,14 @@
         function openEnd(){
             for (var i=0; i<n; i++){
                 for (var j=0; j<n; j++){
+                    var cell = document.querySelector(`[data-row="${i}"][data-col="${j}"]`)
                     if (minefield[i][j]===-1){
-                        document.querySelector(`[data-row="${i}"][data-col="${j}"]`).innerHTML = '💣';
-                        document.querySelector(`[data-row="${i}"][data-col="${j}"]`).style.color = "#999";
+                        cell.innerHTML = '💣';
+                        cell.style.color = "#999";
                     }
-
+                    else
+                        if(cell.classList.contains("flagged"))
+                            cell.innerHTML = '❌'
                 }
             }
         }
@@ -219,9 +223,6 @@
                         }
                     }
                 }
-            } else if (minefield[row][col] === -1) {
-                // 주변 지뢰가 있으면 숫자를 표시
-                cell.classList.add("mine");
             } else {
                 // 주변 지뢰가 있으면 숫자를 표시
                 cell.textContent = minefield[row][col];
@@ -231,13 +232,11 @@
             if (cell.classList.contains("flagged")) {
                 cell.classList.remove("flagged");
                 cell.innerHTML = ''; // 깃발 이모티콘 제거
-                cell.style.Color = "#999"; // 클릭 가능한 흰색으로 변경
                 flaggedCount--;
 
                 // 모든 지뢰가 깃발로 표시되면 게임 성공
                 if (flaggedCount === totalMines && revealedCount === totalMines) {
-                    alert("축하합니다! 승리하셨습니다!");
-                    createArray();
+                    alert("축하합니다! 클리어하셨습니다!");
                 }
             }
         }
