@@ -46,15 +46,16 @@
 
     <div id="flagCount">남은 깃발 수: ?</div>
 
+    <div id="time">00 : 00</div>
 
     <table>
         <tbody id="arrayTableBody"></tbody>
 
         <script>
             var n, tableBody, minefield, revealedCount, totalMines, flaggedCount;
+            var oldTime;
 
             function createArray() {
-                var oldtime=Date.now();
                 n = parseInt(document.getElementById("arraySize").value);
                 if (n<5 || 50<n){
                     alert("잘못된 입력입니다.");
@@ -196,6 +197,13 @@
             flagCountDisplay.textContent = `남은 깃발 수: ${remainingFlags}`;
         }
 
+        function checkTime() {
+            var nowTime = new Date();
+            var sec = oldTime - nowTime;
+            var timeDisplay = document.getElementById("time");
+            timeDisplay.textcontent = `${sec}`;
+            checkTime();
+        }
 
         function openEnd(){
             for (var i=0; i<n; i++){
