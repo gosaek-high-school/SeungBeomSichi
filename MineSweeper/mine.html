@@ -54,6 +54,7 @@
         <script>
             var n, tableBody, minefield, revealedCount, totalMines, flaggedCount;
             var oldTime;
+            var intervalId;
 
             function createArray() {
                 n = parseInt(document.getElementById("arraySize").value);
@@ -85,6 +86,7 @@
                 }
 
                 placeMines();
+                startTimer();
             }
 
             function placeMines() {
@@ -146,13 +148,13 @@
                     // 게임 오버
                     cell.classList.add("clickedmine");
                     openEnd();
-                    alert("Game Over! You clicked on a mine.");
+                    alert("게임 오버!");
                 } 
 
                 else if (revealedCount === n * n - totalMines) {
                     // 모든 셀이 표시되면 게임 성공
-                    alert("Congratulations! You won!");
-                    createArray();
+                    openEnd();
+                    alert("클리어!");
                 }
             }
 
@@ -176,7 +178,8 @@
 
                 // 모든 지뢰가 깃발로 표시되면 게임 성공
                 if (flaggedCount === totalMines && revealedCount === totalMines) {
-                    alert("축하합니다! 클리어하셨습니다!");
+                    openEnd();
+                    alert("클리어!");
                 }
             } else {
                 // 깃발 수가 지뢰 수를 초과하지 않도록
@@ -196,13 +199,19 @@
             var flagCountDisplay = document.getElementById("flagCount");
             flagCountDisplay.textContent = `남은 깃발 수: ${remainingFlags}`;
         }
+        
+        function startTimer() {
+            oldTime = new Date();
+            intervalId = setInterval(checkTime, 1000);
+        }
 
         function checkTime() {
             var nowTime = new Date();
-            var sec = oldTime - nowTime;
+            var diffInSeconds = Math.floor((nowTime - oldTime) / 1000);
+            var minutes = Math.floor(diffInSeconds / 60);
+            var seconds = diffInSeconds % 60;
             var timeDisplay = document.getElementById("time");
-            timeDisplay.textcontent = `${sec}`;
-            checkTime();
+            timeDisplay.textContent = `${minutes < 10 ? '0' : ''}${minutes} : ${seconds < 10 ? '0' : ''}${seconds}`;
         }
 
         function openEnd(){
@@ -221,6 +230,7 @@
                             cell.innerHTML = '❌'
                 }
             }
+            clearInterval(intervalId);
         }
 
         function revealCell(row, col) {
@@ -256,7 +266,8 @@
 
                 // 모든 지뢰가 깃발로 표시되면 게임 성공
                 if (flaggedCount === totalMines && revealedCount === totalMines) {
-                    alert("축하합니다! 클리어하셨습니다!");
+                    openEnd();
+                    alert("클리어!");
                 }
             }
         }
