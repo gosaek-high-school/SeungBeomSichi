@@ -220,7 +220,7 @@
         }
 
         function checkTime() {
-            if (isEnd)
+            if (isEnd || is1)
                 return;
             var nowTime = new Date();
             var diffInSeconds = Math.floor((nowTime - oldTime) / 1000);
