@@ -61,6 +61,9 @@
             var is1, frow, fcol, isEnd;
 
             function createArray() {
+              
+            var flagCountDisplay = document.getElementById("flagCount");
+            flagCountDisplay.textContent = `남은 깃발 수: ?`;
                 is1=1;
                 isEnd=0;
                 n = parseInt(document.getElementById("arraySize").value);
