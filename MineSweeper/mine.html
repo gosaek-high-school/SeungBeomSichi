@@ -64,6 +64,9 @@
               
             var flagCountDisplay = document.getElementById("flagCount");
             flagCountDisplay.textContent = `남은 깃발 수: ?`;
+                          var timeDisplay = document.getElementById("time");
+            timeDisplay.textContent = `
+00:00`;
                 is1=1;
                 isEnd=0;
                 n = parseInt(document.getElementById("arraySize").value);
@@ -220,10 +223,6 @@
         }
 
         function checkTime() {
-            if (is1){
-                minutes=0;
-                seconds=0;
-            }
                 
             if (isEnd || is1)
                 return;
