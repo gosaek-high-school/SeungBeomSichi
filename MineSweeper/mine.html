@@ -29,6 +29,7 @@
         .revealed {
             background-color: #ddd;
         }
+
         .clickedmine {
             color: #f00;
             background-color: #f00;
@@ -36,6 +37,8 @@
         .flaggedmine {
             color: #0f0;
             background-color: #0f0;
+        }
+        .opensoon {
         }
     </style>
 </head>
@@ -55,8 +58,11 @@
             var n, tableBody, minefield, revealedCount, totalMines, flaggedCount;
             var oldTime;
             var intervalId;
+            var is1, frow, fcol, isEnd;
 
             function createArray() {
+                is1=1;
+                isEnd=0;
                 n = parseInt(document.getElementById("arraySize").value);
                 if (n<5 || 50<n){
                     alert("잘못된 입력입니다.");
@@ -85,21 +91,24 @@
                     tableBody.appendChild(row);
                 }
 
-                placeMines();
-                startTimer();
             }
 
             function placeMines() {
                 for (var i = 0; i < n; i++) {
                     for (var j = 0; j < n; j++) {
                         if (Math.random() < 0.2) {
-                            minefield[i][j] = -1;
-                            totalMines++;
+                            var cell = document.querySelector(`[data-row="${i}"][data-col="${j}"]`);
+                            if (!cell.classList.contains("opensoon")){
+                                minefield[i][j] = -1;
+                                totalMines++;
+                            }
                         }
                     }
                 }
                 updateFlagCount();
                 updateNumbers();
+                startTimer();
+                revealCell(frow, fcol);
             }
 
             function updateNumbers() {
@@ -129,11 +138,11 @@
             }
 
             function cellClick(event) {
+                if (isEnd===1)
+                    return;
                 var row = parseInt(event.target.dataset.row);
                 var col = parseInt(event.target.dataset.col);
                 var cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
-
-
                 if (cell.classList.contains("flagged")) {
                     // 이미 깃발 꽂힌 셀은 클릭으로 처리하지 않음
                     return;
@@ -159,6 +168,8 @@
             }
 
             function cellRightClick(event) {
+            if (isEnd)
+                return;
             event.preventDefault();
 
             var row = parseInt(event.target.dataset.row);
@@ -206,6 +217,8 @@
         }
 
         function checkTime() {
+            if (isEnd)
+                return;
             var nowTime = new Date();
             var diffInSeconds = Math.floor((nowTime - oldTime) / 1000);
             var minutes = Math.floor(diffInSeconds / 60);
@@ -215,6 +228,7 @@
         }
 
         function openEnd(){
+            isEnd=1;
             for (var i=0; i<n; i++){
                 for (var j=0; j<n; j++){
                     var cell = document.querySelector(`[data-row="${i}"][data-col="${j}"]`)
@@ -239,8 +253,30 @@
                 return;
             }
 
+            //첫 클릭이면
+            if (is1===1){
+                //첫 클릭 위치 저장
+                frow=row;
+                fcol=col;
+                is1=0;
+                //주변 칸은 폭탄X
+                for (var i = -1; i <= 1; i++) {
+                    for (var j = -1; j <= 1; j++) {
+                        var ni = row + i;
+                        var nj = col + j;
+                        if (ni >= 0 && ni < n && nj >= 0 && nj < n) {
+                            var openFirst = document.querySelector(`[data-row="${ni}"][data-col="${nj}"]`);
+                            openFirst.classList.add("opensoon");
+                        }
+                    }
+                }
+                placeMines();
+                return;
+            }
+
             cell.classList.add("revealed");
             revealedCount++;
+
 
             if (minefield[row][col] === 0) {
                 // 주변에 지뢰가 없으면 주변 셀들을 재귀적으로 열기
