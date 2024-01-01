@@ -220,6 +220,11 @@
         }
 
         function checkTime() {
+            if (is1){
+                minutes=0;
+                seconds=0;
+            }
+                
             if (isEnd || is1)
                 return;
             var nowTime = new Date();
